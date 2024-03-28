@@ -4,14 +4,14 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    bat 'venv\Scripts\python.exe -m py_compile sources/add2vals.py sources/calc.py'
+                    bat 'venv/Scripts/python.exe -m py_compile sources/add2vals.py sources/calc.py'
                 }
             }
         }
         stage('Deliver') {
             steps {
                 script {
-                    bat 'venv\Scripts\pyinstaller.exe --onefile sources/add2vals.py'
+                    bat 'venv/Scripts/pyinstaller.exe --onefile sources/add2vals.py'
                 }
             }
             post {
