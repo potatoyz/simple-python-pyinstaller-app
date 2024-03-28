@@ -1,33 +1,35 @@
 pipeline {
     agent any
-    
     stages {
-        stage('Checkout') {
-            steps {
-                // 检出代码
-                git 'https://github.com/your-repo/simple-python-pyinstaller-app.git'
-            }
-        }
-        
         stage('Build') {
             steps {
-                // 构建应用程序
-                sh 'python -m pip install -r requirements.txt'
-                sh 'python build.py'
+                script {
+                    sh 'python -m py_compile sources/add2vals.py sources/calc.py'
+                }
             }
         }
-        
         stage('Test') {
             steps {
-                // 运行测试
-                sh 'python -m pytest'
+                script {
+                    sh 'py.test --verbose --junit-xml test-reports/results.xml sources/test_calc.py'
+                }
+            }
+            post {
+                always {
+                    junit 'test-reports/results.xml'
+                }
             }
         }
-        
-        stage('Deploy') {
+        stage('Deliver') {
             steps {
-                // 部署应用程序
-                sh 'python deploy.py'
+                script {
+                    sh 'pyinstaller --onefile sources/add2vals.py'
+                }
+            }
+            post {
+                success {
+                    archiveArtifacts 'dist/add2vals'
+                }
             }
         }
     }
